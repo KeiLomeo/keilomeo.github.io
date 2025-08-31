@@ -397,7 +397,9 @@
 
 
         // --- Initialize ---
-        initializeApp();
+        // Wait for the DOM to be fully loaded before starting the app
+        // This ensures that the categories.js file has been loaded and parsed
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
