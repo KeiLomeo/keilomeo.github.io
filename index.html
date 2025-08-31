@@ -24,7 +24,12 @@
 
     <!-- Screen 1: Category Selection -->
     <div id="category-screen" class="relative w-full h-full max-w-md mx-auto p-8 flex flex-col justify-center items-center text-center">
-        <div class="absolute top-6 right-6">
+        <div class="absolute top-6 right-6 flex items-center space-x-2">
+             <button id="fullscreen-btn" class="text-gray-400 hover:text-white transition-colors p-2 hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+                </svg>
+            </button>
             <button id="settings-btn" class="text-gray-400 hover:text-white transition-colors p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -32,7 +37,7 @@
                 </svg>
             </button>
         </div>
-        <h1 class="text-5xl font-black mb-2 uppercase tracking-wider flex-shrink-0">Charades</h1>
+        <h1 class="text-4xl sm:text-5xl font-black mb-2 uppercase tracking-wider flex-shrink-0">Charades</h1>
         <p class="text-lg text-gray-400 mb-6 flex-shrink-0">Choose a category to start!</p>
         
         <div id="top-buttons-container" class="w-full mb-4 flex-shrink-0 space-y-4">
@@ -50,7 +55,7 @@
     <!-- Screen 2: Game Screen -->
     <div id="game-screen" class="hidden w-full h-full flex flex-col relative">
         <!-- Top Bar: Timer and Score -->
-        <div class="flex justify-between items-center p-4 text-2xl font-bold z-10">
+        <div class="flex justify-between items-center p-4 text-xl sm:text-2xl font-bold z-10">
             <div id="timer" class="bg-gray-800 px-4 py-2 rounded-lg">Time: <span id="time-left">60</span></div>
             <div id="score" class="bg-gray-800 px-4 py-2 rounded-lg">Score: <span id="current-score">0</span></div>
         </div>
@@ -63,13 +68,13 @@
             <div id="pass-area" class="w-1/2 h-full bg-red-600/80 active:bg-red-700 transition-colors cursor-pointer"></div>
             <!-- Word Display (Overlay) -->
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <h2 id="word-display" class="text-6xl md:text-8xl font-extrabold text-center px-4 bg-gray-900/60 rounded-xl p-4 shadow-2xl"></h2>
+                <h2 id="word-display" class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-center px-4 bg-gray-900/60 rounded-xl p-4 shadow-2xl"></h2>
             </div>
         </div>
         
         <!-- Feedback Overlays -->
-        <div id="correct-feedback" class="absolute inset-0 bg-green-600 flex items-center justify-center text-7xl font-black uppercase transition-transform duration-300 ease-in-out -translate-x-full">Correct!</div>
-        <div id="pass-feedback" class="absolute inset-0 bg-red-600 flex items-center justify-center text-7xl font-black uppercase transition-transform duration-300 ease-in-out translate-x-full">Passed!</div>
+        <div id="correct-feedback" class="absolute inset-0 bg-green-600 flex items-center justify-center text-5xl sm:text-7xl font-black uppercase transition-transform duration-300 ease-in-out -translate-x-full">Correct!</div>
+        <div id="pass-feedback" class="absolute inset-0 bg-red-600 flex items-center justify-center text-5xl sm:text-7xl font-black uppercase transition-transform duration-300 ease-in-out translate-x-full">Passed!</div>
     </div>
 
     <!-- Screen 3: Final Score Screen -->
@@ -77,7 +82,7 @@
         <div class="w-full max-w-md mx-auto">
             <h2 id="end-game-title" class="text-4xl font-bold mb-2">Time's Up!</h2>
             <p class="text-2xl text-gray-400 mb-8">Your final score is:</p>
-            <div id="final-score" class="text-9xl font-black text-yellow-400 mb-12">0</div>
+            <div id="final-score" class="text-8xl sm:text-9xl font-black text-yellow-400 mb-12">0</div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-8">
                 <div>
                     <h3 class="text-2xl font-bold text-green-400 mb-4 border-b-2 border-green-400 pb-2">Correct Words</h3>
@@ -94,7 +99,7 @@
 
     <!-- Screen 4: Settings -->
     <div id="settings-screen" class="hidden w-full h-full max-w-md mx-auto p-8 flex flex-col justify-center items-center text-center">
-        <h1 class="text-5xl font-black mb-4 uppercase tracking-wider">Settings</h1>
+        <h1 class="text-4xl sm:text-5xl font-black mb-4 uppercase tracking-wider">Settings</h1>
         <p class="text-lg text-gray-400 mb-12">Select the round duration.</p>
         <div id="duration-buttons" class="grid grid-cols-2 gap-4 w-full mb-12">
             <button data-duration="30" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">30s</button>
@@ -103,6 +108,18 @@
             <button data-duration="120" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">120s</button>
         </div>
         <button id="back-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">Back</button>
+    </div>
+
+    <!-- Fullscreen Prompt Modal -->
+    <div id="fullscreen-prompt" class="hidden absolute inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
+        <div class="bg-gray-800 rounded-lg p-8 text-center shadow-2xl max-w-sm">
+            <h3 class="text-2xl font-bold mb-4">Go Fullscreen?</h3>
+            <p class="text-gray-400 mb-8">For the best experience, we recommend playing in fullscreen and landscape mode.</p>
+            <div class="flex justify-center gap-4">
+                <button id="fullscreen-yes" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg uppercase">Yes</button>
+                <button id="fullscreen-no" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg uppercase">No, thanks</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -162,6 +179,7 @@
         const settingsScreen = document.getElementById('settings-screen');
         
         const settingsBtn = document.getElementById('settings-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
         const backBtn = document.getElementById('back-btn');
 
         const timeLeftDisplay = document.getElementById('time-left');
@@ -180,6 +198,10 @@
         const correctWordsList = document.getElementById('correct-words-list');
         const passedWordsList = document.getElementById('passed-words-list');
 
+        const fullscreenPrompt = document.getElementById('fullscreen-prompt');
+        const fullscreenYesBtn = document.getElementById('fullscreen-yes');
+        const fullscreenNoBtn = document.getElementById('fullscreen-no');
+
         // Game State
         let currentWordList = [];
         let correctWords = [];
@@ -189,6 +211,7 @@
         let gameDuration = 60;
         let timeLeft;
         let isAnimating = false;
+        let pendingCategory = null; // To hold category while prompt is shown
 
         // --- UI Initialization ---
         function initializeApp() {
@@ -196,7 +219,7 @@
             
             // Create Random button
             const randomButton = document.createElement('button');
-            randomButton.className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors tracking-wider';
+            randomButton.className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-4 rounded-lg text-xl sm:text-2xl uppercase transition-colors tracking-wider';
             randomButton.textContent = '🎲 Random';
             randomButton.onclick = () => startGame('Random');
             topButtonsContainer.appendChild(randomButton);
@@ -205,16 +228,57 @@
             const categoryButtonsContainer = document.getElementById('category-buttons');
             Object.keys(words).forEach(category => {
                 const button = document.createElement('button');
-                button.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors';
+                button.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-lg sm:text-xl uppercase transition-colors';
                 button.textContent = category;
                 button.onclick = () => startGame(category);
                 categoryButtonsContainer.appendChild(button);
             });
             updateDurationSelection();
+
+            // Show fullscreen button if API is available
+            if (document.documentElement.requestFullscreen) {
+                fullscreenBtn.classList.remove('hidden');
+            }
+        }
+
+        // --- Fullscreen and Orientation ---
+        async function goFullscreenAndLandscape() {
+            try {
+                const element = document.documentElement;
+                if (element.requestFullscreen) {
+                    await element.requestFullscreen();
+                    // Lock orientation after entering fullscreen (best effort)
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock('landscape').catch(() => {});
+                    }
+                }
+            } catch (err) {
+                // Log error silently without disturbing user. This can happen if the feature
+                // is blocked by browser permissions policy in an iframe.
+                console.error(`Could not enter fullscreen: ${err.message}`);
+            }
         }
 
         // --- Main Game Flow ---
         function startGame(category) {
+            pendingCategory = category; // Store the category selection
+
+            // On smaller screens, ask the user if they want to go fullscreen
+            if (window.innerWidth < 768 && document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                fullscreenPrompt.classList.remove('hidden');
+            } else {
+                // On desktop or if already fullscreen, start the game immediately
+                proceedToStartGame();
+            }
+        }
+
+        function proceedToStartGame() {
+            fullscreenPrompt.classList.add('hidden'); // Ensure prompt is hidden
+            if (!pendingCategory) return; // Don't start if no category was selected
+
+            const category = pendingCategory;
+            pendingCategory = null; // Clear pending category
+
             if (category === 'Random') {
                 currentWordList = Object.values(words).flat();
             } else {
@@ -289,7 +353,7 @@
             }, 400);
         }
 
-        function endGame(reason) {
+        async function endGame(reason) {
             clearInterval(timer);
             if (reason === 'time') {
                 endGameTitle.innerText = "Time's Up!";
@@ -303,6 +367,11 @@
             finalScoreDisplay.innerText = score;
             populateEndGameLists();
             showScreen('score-screen');
+
+            // Attempt to exit fullscreen when game ends, if currently in fullscreen
+            if (document.fullscreenElement && document.exitFullscreen) {
+                await document.exitFullscreen();
+            }
         }
 
         function populateEndGameLists() {
@@ -348,8 +417,16 @@
         passArea.addEventListener('click', handlePass);
         playAgainBtn.addEventListener('click', playAgain);
         settingsBtn.addEventListener('click', showSettings);
+        fullscreenBtn.addEventListener('click', goFullscreenAndLandscape);
         backBtn.addEventListener('click', hideSettings);
         document.getElementById('duration-buttons').addEventListener('click', handleDurationChange);
+
+        fullscreenYesBtn.addEventListener('click', async () => {
+            await goFullscreenAndLandscape();
+            proceedToStartGame();
+        });
+        fullscreenNoBtn.addEventListener('click', proceedToStartGame);
+
 
         // --- Initialize ---
         initializeApp();
