@@ -9,94 +9,162 @@
 // The app will automatically create a new button for your category!
 
 const categories = {
-    'Movies': [
-        'Times Square', 'Las Vegas', 'Hollywood', 'The White House', 'Buckingham Palace', 'The Moon', 'Mars', 'The Beach',
-        'The Jungle', 'The Desert', 'Niagara Falls', 'Stonehenge', 'Mount Fuji'
-    ],
-    'Fantasy & Superheroes': [
-        'Spider-Man', 'Batman', 'Superman', 'Wonder Woman', 'Iron Man', 'Captain America', 'Thor', 'Hulk', 'Black Widow',
-        'Doctor Strange', 'Wolverine', 'Deadpool', 'Gandalf', 'Frodo Baggins', 'Legolas', 'Harry Potter', 'Hermione Granger',
-        'Ron Weasley', 'Darth Vader', 'Yoda', 'Luke Skywalker', 'Princess Leia', 'Obi-Wan Kenobi', 'Thanos', 'Loki',
-        'Aquaman', 'Flash', 'Green Lantern'
-    ],
-    'Video Games': [
-        'Minecraft', 'Fortnite', 'Pokémon', 'Call of Duty', 'Super Mario', 'The Legend of Zelda', 'Among Us',
-        'League of Legends', 'World of Warcraft', 'Overwatch', 'Counter-Strike', 'Roblox', 'Angry Birds', 'Tetris',
-        'Pac-Man', 'Donkey Kong', 'Street Fighter', 'Mortal Kombat', 'Halo', 'Final Fantasy', 'Sonic the Hedgehog',
-        'Grand Theft Auto', 'Elden Ring', 'Dark Souls', 'Animal Crossing', 'Clash of Clans'
-    ],
-    'Disney / Pixar Characters': [
-        'Mickey Mouse', 'Minnie Mouse', 'Donald Duck', 'Goofy', 'Pluto', 'Simba', 'Nala', 'Scar', 'Mufasa', 'Aladdin',
-        'Jasmine', 'Genie', 'Ariel', 'Ursula', 'Belle', 'Beast', 'Cinderella', 'Snow White', 'Elsa', 'Anna', 'Olaf',
-        'Kristoff', 'Rapunzel', 'Flynn Rider', 'Woody', 'Buzz Lightyear', 'Jessie', 'Mr. Incredible', 'Sully', 'Mike Wazowski'
-    ],
-    'Actions / Verbs': [
-        'Running', 'Jumping', 'Dancing', 'Singing', 'Cooking', 'Sleeping', 'Eating', 'Drinking', 'Climbing', 'Swimming',
-        'Flying', 'Crying', 'Laughing', 'Walking', 'Talking', 'Painting', 'Writing', 'Reading', 'Driving', 'Shopping',
-        'Typing', 'Cleaning', 'Baking', 'Fishing', 'Hunting', 'Drawing'
-    ],
-    'Vehicles / Transport': [
-        'Car', 'Bus', 'Train', 'Airplane', 'Helicopter', 'Boat', 'Bicycle', 'Motorcycle', 'Submarine', 'Truck',
-        'Scooter', 'Tram', 'Rocket', 'Spaceship', 'Hot Air Balloon', 'Skateboard', 'Rollerblades', 'Taxi', 'Ambulance',
-        'Police Car', 'Fire Truck', 'Jet Ski', 'Bulldozer', 'Tank'
-    ],
-    'Household Items': [
-        'Fridge', 'Microwave', 'Oven', 'Toaster', 'Blender', 'Washing Machine', 'Dryer', 'Vacuum Cleaner', 'Broom',
-        'Sponge', 'Soap', 'Shampoo', 'Towel', 'Blanket', 'Pillow', 'Curtains', 'Rug', 'TV Remote', 'Light Switch',
-        'Fan', 'Heater', 'Iron', 'Hair Dryer', 'Toilet Paper'
-    ],
-    'Fairy Tales & Myths': [
-        'Cinderella', 'Snow White', 'Sleeping Beauty', 'Rapunzel', 'Little Red Riding Hood', 'Hansel and Gretel',
-        'Rumpelstiltskin', 'Beauty and the Beast', 'The Little Mermaid', 'The Three Little Pigs', 'Hercules', 'Zeus',
-        'Poseidon', 'Hades', 'Medusa', 'Achilles', 'King Arthur', 'Merlin', 'Robin Hood', 'Peter Pan', 'Tinker Bell',
-        'Pinocchio', 'Jack and the Beanstalk'
-    ],
-    'Celebrities / Influencers': [
-        'MrBeast', 'PewDiePie', 'Ninja', 'Charli D’Amelio', 'Addison Rae', 'James Charles', 'Emma Chamberlain',
-        'Logan Paul', 'Jake Paul', 'Markiplier', 'Jacksepticeye', 'Pokimane', 'Shroud', 'Tfue', 'Dream', 'Corpse Husband',
-        'Lilly Singh', 'Zoella', 'DanTDM', 'KSI', 'Shane Dawson', 'David Dobrik'
-    ],
-    'Harry Potter': [
-        'Harry Potter', 'Hermione Granger', 'Ron Weasley', 'Albus Dumbledore', 'Severus Snape', 'Lord Voldemort',
-        'Draco Malfoy', 'Sirius Black', 'Rubeus Hagrid', 'Minerva McGonagall', 'Neville Longbottom', 'Luna Lovegood',
-        'Ginny Weasley', 'Fred Weasley', 'George Weasley', 'Bellatrix Lestrange', 'Dobby', 'Kreacher', 'Hogwarts',
-        'Diagon Alley', 'Hogsmeade', 'Quidditch', 'Sorting Hat', 'Griffindor', 'Slytherin'
-    ],
-    'Star Wars': [
-        'Luke Skywalker', 'Darth Vader', 'Princess Leia', 'Han Solo', 'Chewbacca', 'Yoda', 'Obi-Wan Kenobi',
-        'R2-D2', 'C-3PO', 'Anakin Skywalker', 'Padmé Amidala', 'Rey', 'Finn', 'Poe Dameron', 'Kylo Ren', 'Palpatine',
-        'Boba Fett', 'Jango Fett', 'Mace Windu', 'Lando Calrissian', 'Jabba the Hutt', 'Death Star', 'Millennium Falcon',
-        'Tatooine', 'Endor', 'Hoth'
-    ],
-    'Marvel': [
-        'Iron Man', 'Captain America', 'Thor', 'Hulk', 'Black Widow', 'Hawkeye', 'Spider-Man', 'Doctor Strange',
-        'Black Panther', 'Scarlet Witch', 'Vision', 'Ant-Man', 'Wasp', 'Captain Marvel', 'Falcon', 'Winter Soldier',
-        'Star-Lord', 'Gamora', 'Groot', 'Rocket Raccoon', 'Drax', 'Thanos', 'Loki', 'Ultron', 'Nick Fury'
-    ],
-    'DC Superheroes': [
-        'Batman', 'Superman', 'Wonder Woman', 'Flash', 'Aquaman', 'Cyborg', 'Green Lantern', 'Robin', 'Nightwing',
-        'Batgirl', 'Catwoman', 'Joker', 'Harley Quinn', 'Lex Luthor', 'Penguin', 'Riddler', 'Two-Face', 'Poison Ivy',
-        'Darkseid', 'Shazam', 'Black Adam', 'Supergirl', 'Martian Manhunter'
-    ],
-    'Lord of the Rings': [
-        'Frodo Baggins', 'Samwise Gamgee', 'Merry Brandybuck', 'Pippin Took', 'Aragorn', 'Legolas', 'Gimli', 'Boromir',
-        'Gandalf', 'Saruman', 'Sauron', 'Gollum', 'Elrond', 'Arwen', 'Galadriel', 'Éowyn', 'Faramir', 'The Shire',
-        'Mordor', 'Mount Doom', 'Rivendell', 'Helm’s Deep', 'Minas Tirith'
-    ],
-    'Game of Thrones': [
-        'Jon Snow', 'Daenerys Targaryen', 'Tyrion Lannister', 'Cersei Lannister', 'Jaime Lannister', 'Arya Stark',
-        'Sansa Stark', 'Bran Stark', 'Eddard Stark', 'Khal Drogo', 'Jorah Mormont', 'Brienne of Tarth', 'The Hound',
-        'The Mountain', 'Petyr Baelish', 'Varys', 'Samwell Tarly', 'Robb Stark', 'Stannis Baratheon', 'Melisandre',
-        'Night King', 'White Walker', 'Winterfell', 'King’s Landing'
-    ],
-    'Stranger Things': [
-        'Eleven', 'Mike Wheeler', 'Dustin Henderson', 'Lucas Sinclair', 'Will Byers', 'Max Mayfield', 'Jim Hopper',
-        'Joyce Byers', 'Steve Harrington', 'Nancy Wheeler', 'Jonathan Byers', 'Billy Hargrove', 'Robin Buckley',
-        'Demogorgon', 'Mind Flayer', 'Vecna', 'Hawkins', 'The Upside Down', 'Hawkins Lab'
-    ],
-    'Pokémon': [
-        'Pikachu', 'Charizard', 'Bulbasaur', 'Squirtle', 'Charmander', 'Jigglypuff', 'Meowth', 'Mewtwo', 'Eevee',
-        'Snorlax', 'Gengar', 'Psyduck', 'Magikarp', 'Dragonite', 'Lapras', 'Lucario', 'Greninja', 'Ash Ketchum',
-        'Misty', 'Brock', 'Team Rocket', 'Pokéball', 'Pokédex', 'Gym Badge'
-    ]
+  'Movies': [
+    'Inception', 'The Matrix', 'Pulp Fiction', 'Forrest Gump', 'The Godfather', 'Titanic', 'Avatar', 'Jurassic Park',
+    'Star Wars', 'Harry Potter', 'The Avengers', 'The Lion King', 'Frozen', 'Toy Story', 'Finding Nemo', 'Lord of the Rings',
+    'Back to the Future', 'The Dark Knight', 'Shrek', 'Spider-Man'
+  ],
+
+  'TV Shows': [
+    'Friends', 'The Office', 'Breaking Bad', 'Game of Thrones', 'Stranger Things', 'The Simpsons', 'Family Guy', 'South Park',
+    'How I Met Your Mother', 'Seinfeld', 'The Big Bang Theory', 'Sherlock', 'Doctor Who', 'The Crown', 'Modern Family'
+  ],
+
+  'Cartoons': [
+    'SpongeBob SquarePants', 'Adventure Time', 'Teen Titans', 'The Fairly OddParents', 'Danny Phantom', 'Kim Possible',
+    'Phineas and Ferb', 'The Amazing World of Gumball', 'Regular Show', 'Avatar: The Last Airbender', 'The Legend of Korra',
+    'Rick and Morty', 'BoJack Horseman', 'Archer', 'Steven Universe'
+  ],
+
+  'Famous People': [
+    'Elon Musk', 'Taylor Swift', 'Beyoncé', 'Michael Jackson', 'Oprah Winfrey', 'Barack Obama', 'Donald Trump', 'LeBron James',
+    'Cristiano Ronaldo', 'Lionel Messi', 'Bill Gates', 'Jeff Bezos', 'Selena Gomez', 'Rihanna', 'Dwayne Johnson', 'Tom Cruise',
+    'Brad Pitt', 'Angelina Jolie', 'Keanu Reeves', 'Morgan Freeman', 'Will Smith', 'Adele', 'Lady Gaga', 'Justin Bieber', 'Shakira'
+  ],
+
+  'Songs/Music Artists': [
+    'Taylor Swift', 'Ariana Grande', 'Billie Eilish', 'Ed Sheeran', 'Drake', 'Beyoncé', 'Kanye West', 'The Beatles', 'Michael Jackson',
+    'Queen', 'Rihanna', 'Justin Bieber', 'Katy Perry', 'Adele', 'Post Malone', 'Imagine Dragons', 'Coldplay', 'Shawn Mendes',
+    'Harry Styles', 'Bruno Mars', 'Miley Cyrus'
+  ],
+
+  'Sports & Athletes': [
+    'Soccer', 'Basketball', 'Tennis', 'Golf', 'Baseball', 'Swimming', 'Usain Bolt', 'Serena Williams', 'Roger Federer',
+    'Lionel Messi', 'Cristiano Ronaldo', 'LeBron James', 'Michael Jordan', 'Tiger Woods', 'Tom Brady', 'Muhammad Ali', 'Conor McGregor',
+    'Simone Biles'
+  ],
+
+  'Professions/Jobs': [
+    'Doctor', 'Nurse', 'Teacher', 'Pilot', 'Firefighter', 'Police Officer', 'Chef', 'Farmer', 'Scientist', 'Engineer',
+    'Lawyer', 'Dentist', 'Artist', 'Musician', 'Actor', 'Writer', 'Athlete', 'Photographer', 'Mechanic', 'Construction Worker', 'Politician', 'Taxi Driver'
+  ],
+
+  'Objects': [
+    'Chair', 'Table', 'Laptop', 'Smartphone', 'Book', 'Pen', 'Pencil', 'Glasses', 'Backpack', 'Shoes', 'Ball', 'Headphones',
+    'Watch', 'Bottle', 'Plate', 'Fork', 'Spoon', 'Knife', 'Umbrella', 'Camera', 'Television', 'Keyboard', 'Mouse', 'Remote Control'
+  ],
+
+  'Places': [
+    'New York', 'Paris', 'London', 'Tokyo', 'Sydney', 'Los Angeles', 'Rome', 'Disneyland', 'Eiffel Tower', 'Great Wall of China',
+    'Pyramids of Giza', 'Colosseum', 'Mount Everest', 'Grand Canyon', 'Niagara Falls', 'Statue of Liberty', 'Times Square', 'Hollywood'
+  ],
+
+  'Fantasy & Superheroes': [
+    'Spider-Man', 'Batman', 'Superman', 'Iron Man', 'Thor', 'Hulk', 'Wonder Woman', 'The Flash', 'Aquaman', 'Doctor Strange',
+    'Captain America', 'Black Panther', 'Scarlet Witch', 'Loki', 'Gandalf', 'Frodo', 'Legolas', 'Aragorn', 'Dumbledore', 'Harry Potter', 'Voldemort'
+  ],
+
+  'Video Games': [
+    'Minecraft', 'Fortnite', 'Call of Duty', 'Among Us', 'League of Legends', 'World of Warcraft', 'Overwatch', 'Valorant',
+    'Pokémon', 'Super Mario', 'Zelda', 'Tetris', 'Sonic the Hedgehog', 'Street Fighter', 'Mortal Kombat', 'Grand Theft Auto', 'The Sims', 'Roblox'
+  ],
+
+  'Actions/Verbs': [
+    'Running', 'Jumping', 'Dancing', 'Singing', 'Cooking', 'Sleeping', 'Crying', 'Laughing', 'Reading', 'Writing', 'Drawing',
+    'Painting', 'Cleaning', 'Driving', 'Flying', 'Swimming', 'Climbing', 'Shopping', 'Eating', 'Drinking', 'Hugging', 'Kissing'
+  ],
+
+  'Vehicles/Transport': [
+    'Car', 'Bus', 'Train', 'Airplane', 'Bicycle', 'Motorcycle', 'Truck', 'Boat', 'Helicopter', 'Rocket', 'Scooter', 'Subway',
+    'Tram', 'Ship', 'Hot Air Balloon', 'Taxi', 'Skateboard'
+  ],
+
+  'Household Items': [
+    'Bed', 'Sofa', 'Lamp', 'Television', 'Microwave', 'Oven', 'Fridge', 'Vacuum Cleaner', 'Toaster', 'Blender', 'Shower',
+    'Bathtub', 'Sink', 'Toilet', 'Fan', 'Heater', 'Mirror', 'Closet'
+  ],
+
+  'Fairy Tales & Myths': [
+    'Cinderella', 'Snow White', 'Sleeping Beauty', 'Rapunzel', 'Little Red Riding Hood', 'Hansel and Gretel',
+    'Beauty and the Beast', 'The Little Mermaid', 'Hercules', 'Zeus', 'Medusa', 'Pegasus', 'King Midas', 'Robin Hood', 'Peter Pan'
+  ],
+
+  'Celebrities/Influencers': [
+    'MrBeast', 'PewDiePie', 'Logan Paul', 'Jake Paul', 'Kim Kardashian', 'Kylie Jenner', 'Charli D’Amelio', 'Addison Rae',
+    'Ninja', 'Pokimane', 'Markiplier', 'Jacksepticeye', 'Zendaya', 'Tom Holland', 'Emma Watson', 'Millie Bobby Brown'
+  ],
+
+  'Harry Potter': [
+    'Harry Potter', 'Hermione Granger', 'Ron Weasley', 'Albus Dumbledore', 'Severus Snape', 'Lord Voldemort', 'Draco Malfoy',
+    'Sirius Black', 'Hagrid', 'Minerva McGonagall', 'Luna Lovegood', 'Neville Longbottom', 'Ginny Weasley', 'Dobby', 'Kreacher',
+    'Bellatrix Lestrange', 'Remus Lupin', 'Cedric Diggory', 'Cho Chang'
+  ],
+
+  'Star Wars': [
+    'Luke Skywalker', 'Darth Vader', 'Han Solo', 'Princess Leia', 'Obi-Wan Kenobi', 'Yoda', 'Chewbacca', 'R2-D2', 'C-3PO',
+    'Anakin Skywalker', 'Padmé Amidala', 'Mace Windu', 'Darth Maul', 'Emperor Palpatine', 'Kylo Ren', 'Rey', 'Finn', 'Poe Dameron', 'Grogu', 'Ahsoka Tano'
+  ],
+
+  'Marvel': [
+    'Iron Man', 'Captain America', 'Thor', 'Hulk', 'Black Widow', 'Hawkeye', 'Spider-Man', 'Black Panther', 'Doctor Strange',
+    'Scarlet Witch', 'Vision', 'Ant-Man', 'Wasp', 'Loki', 'Falcon', 'Winter Soldier', 'Nick Fury', 'Star-Lord', 'Gamora', 'Drax', 'Rocket Raccoon', 'Groot'
+  ],
+
+  'DC': [
+    'Batman', 'Superman', 'Wonder Woman', 'The Flash', 'Aquaman', 'Cyborg', 'Green Lantern', 'Joker', 'Harley Quinn', 'Catwoman',
+    'Lex Luthor', 'Darkseid', 'Shazam', 'Martian Manhunter', 'Robin', 'Batgirl', 'Penguin', 'Riddler'
+  ],
+
+  'Lord of the Rings': [
+    'Frodo Baggins', 'Samwise Gamgee', 'Gandalf', 'Aragorn', 'Legolas', 'Gimli', 'Boromir', 'Gollum', 'Bilbo Baggins',
+    'Galadriel', 'Elrond', 'Saruman', 'Éowyn', 'Faramir', 'Arwen', 'Théoden'
+  ],
+
+  'Game of Thrones': [
+    'Jon Snow', 'Daenerys Targaryen', 'Tyrion Lannister', 'Cersei Lannister', 'Jaime Lannister', 'Arya Stark', 'Sansa Stark',
+    'Bran Stark', 'Ned Stark', 'Robb Stark', 'Joffrey Baratheon', 'Stannis Baratheon', 'Petyr Baelish', 'Varys', 'Samwell Tarly',
+    'Brienne of Tarth', 'The Hound', 'The Mountain', 'Khal Drogo'
+  ],
+
+  'Stranger Things': [
+    'Eleven', 'Mike Wheeler', 'Dustin Henderson', 'Lucas Sinclair', 'Will Byers', 'Max Mayfield', 'Jim Hopper', 'Joyce Byers',
+    'Steve Harrington', 'Nancy Wheeler', 'Jonathan Byers', 'Robin Buckley', 'Billy Hargrove', 'Eddie Munson'
+  ],
+
+  'Pokémon': [
+    'Pikachu', 'Charizard', 'Bulbasaur', 'Squirtle', 'Jigglypuff', 'Meowth', 'Psyduck', 'Snorlax', 'Eevee', 'Mewtwo',
+    'Gengar', 'Machamp', 'Magikarp', 'Lapras', 'Dragonite', 'Lucario', 'Greninja'
+  ],
+
+  'Disney Classics': [
+    'Mickey Mouse', 'Minnie Mouse', 'Donald Duck', 'Goofy', 'Pluto', 'Snow White', 'Cinderella', 'Aurora', 'Ariel',
+    'Belle', 'Jasmine', 'Aladdin', 'Simba', 'Mufasa', 'Scar', 'Timon', 'Pumbaa', 'Hercules', 'Tarzan', 'Mulan', 'Pocahontas',
+    'Tinker Bell', 'Peter Pan'
+  ],
+
+  'Pixar': [
+    'Woody', 'Buzz Lightyear', 'Jessie', 'Rex', 'Mr. Potato Head', 'Slinky Dog', 'Nemo', 'Dory', 'Marlin', 'Bruce',
+    'Sulley', 'Mike Wazowski', 'Boo', 'Lightning McQueen', 'Mater', 'Remy', 'Carl Fredricksen', 'Russell', 'Dug', 'WALL-E',
+    'EVE', 'Merida', 'Joy', 'Sadness', 'Anger'
+  ]
+
+'Famous Athletes': [
+  'Usain Bolt', 'Serena Williams', 'Roger Federer', 'Lionel Messi',
+  'Cristiano Ronaldo', 'LeBron James', 'Michael Jordan', 'Tiger Woods',
+  'Tom Brady', 'Muhammad Ali', 'Simone Biles', 'Michael Phelps',
+  'Megan Rapinoe', 'Naomi Osaka', 'Novak Djokovic', 'Conor McGregor',
+  'Katie Ledecky', 'Shaquille O’Neal', 'Venus Williams', 'Stephen Curry'
+]
+
+'Sports': [
+  'Soccer', 'Basketball', 'Baseball', 'American Football', 'Ice Hockey',
+  'Rugby', 'Volleyball', 'Handball', 'Cricket', 'Water Polo', 'Field Hockey',
+  'Lacrosse', 'Softball', 'Table Tennis', 'Tennis', 'Golf', 'Swimming',
+  'Track & Field', 'Gymnastics', 'Boxing', 'Wrestling', 'Martial Arts',
+  'Cycling', 'Skiing', 'Snowboarding', 'Figure Skating', 'Diving',
+  'Weightlifting', 'Archery', 'Fencing', 'Surfing', 'Skateboarding',
+  'Sailing', 'Badminton', 'Squash', 'Rock Climbing', 'Horse Riding', 'Curling'
+]
+
 };
+
