@@ -1,1 +1,74 @@
-<h1>Hey</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Charades Game</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: sans-serif;
+      background: #222;
+      color: #fff;
+      text-align: center;
+    }
+    #word {
+      font-size: 3em;
+      padding: 20px;
+    }
+    #subjects button {
+      margin: 10px;
+      padding: 15px 25px;
+      font-size: 1.2em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="subjects">
+    <button onclick="chooseSubject('movies')">Movies</button>
+    <button onclick="chooseSubject('animals')">Animals</button>
+    <button onclick="chooseSubject('sports')">Sports</button>
+  </div>
+  <div id="game" style="display:none;">
+    <div id="word">Tap to start</div>
+  </div>
+
+  <script>
+    const words = {
+      movies: ["Inception", "Titanic", "Avengers", "Shrek"],
+      animals: ["Dog", "Cat", "Elephant", "Kangaroo"],
+      sports: ["Football", "Basketball", "Tennis", "Swimming"]
+    };
+
+    let currentSubject = null;
+
+    function chooseSubject(subject) {
+      currentSubject = subject;
+      document.getElementById("subjects").style.display = "none";
+      document.getElementById("game").style.display = "flex";
+      newWord();
+    }
+
+    function newWord() {
+      const list = words[currentSubject];
+      const randomWord = list[Math.floor(Math.random() * list.length)];
+      document.getElementById("word").textContent = randomWord;
+    }
+
+    document.body.addEventListener("click", (e) => {
+      if (!currentSubject) return;
+      const x = e.clientX;
+      if (x < window.innerWidth / 2) {
+        console.log("✅ Good!");
+      } else {
+        console.log("❌ Pass!");
+      }
+      newWord();
+    });
+  </script>
+</body>
+</html>
