@@ -135,57 +135,11 @@
             </div>
         </div>
     </div>
-
+    
+    <!-- Load the categories from the external file -->
+    <script src="categories.js"></script>
+    
     <script>
-        // HOW TO ADD NEW CATEGORIES:
-        // 1. Add a new entry to the 'words' object below.
-        // 2. The key is the category name (e.g., 'New Category').
-        // 3. The value is an array of strings, with each string being a word or phrase.
-        // 4. Make sure to add a comma after the closing bracket ] of the previous category.
-        // Example:
-        //     'Cartoons': [ ... ],
-        //     'New Category': ['Word 1', 'Word 2', 'Word 3'],
-        // The app will automatically create a new button for your category!
-        const words = {
-            'Movies': [
-                'Inception', 'The Matrix', 'Pulp Fiction', 'Forrest Gump', 'The Godfather', 'Titanic', 'Avatar',
-                'Jurassic Park', 'Star Wars', 'Jaws', 'E.T.', 'The Lion King', 'Frozen', 'Toy Story', 'Finding Nemo',
-                'Avengers: Endgame', 'Black Panther', 'Iron Man', 'The Dark Knight', 'Harry Potter', 'Gladiator',
-                'The Hunger Games', 'Wonder Woman', 'Guardians of the Galaxy', 'Spider-Man', 'Shrek', 'Up', 'Coco', 'Moana'
-            ],
-            'TV Shows': [
-                'Breaking Bad', 'Friends', 'Game of Thrones', 'The Office', 'Stranger Things', 'The Mandalorian',
-                'The Simpsons', 'Rick and Morty', 'Sherlock', 'The Crown', 'Grey\'s Anatomy', 'The Big Bang Theory',
-                'Better Call Saul', 'House of Cards', 'How I Met Your Mother', 'Lost', 'Narcos', 'Westworld',
-                'The Witcher', 'Peaky Blinders', 'Vikings', 'Money Heist', 'Black Mirror', 'Fargo', 'Cobra Kai', 'Dexter', 'Supernatural'
-            ],
-            'Animals': [
-                'Elephant', 'Giraffe', 'Kangaroo', 'Penguin', 'Dolphin', 'Tiger', 'Koala', 'Owl', 'Panda',
-                'Crocodile', 'Lion', 'Bear', 'Wolf', 'Fox', 'Zebra', 'Raccoon', 'Hippopotamus', 'Cheetah',
-                'Rabbit', 'Horse', 'Camel', 'Sloth', 'Eagle', 'Shark', 'Frog', 'Otter', 'Squirrel'
-            ],
-            'Famous People': [
-                'Albert Einstein', 'Marilyn Monroe', 'Leonardo da Vinci', 'Oprah Winfrey', 'Elon Musk',
-                'Beyoncé', 'Bill Gates', 'Cleopatra', 'Michael Jackson', 'Queen Elizabeth II', 'Barack Obama',
-                'Taylor Swift', 'Brad Pitt', 'Angelina Jolie', 'Serena Williams', 'Cristiano Ronaldo',
-                'Lady Gaga', 'Tom Hanks', 'Jennifer Aniston', 'Dwayne Johnson', 'Rihanna', 'Kanye West',
-                'Stephen Hawking', 'Walt Disney', 'Nelson Mandela', 'Martin Luther King Jr.', 'Emma Watson', 'Will Smith', 'Shakira'
-            ],
-            'Foods': [
-                'Pizza', 'Burger', 'Sushi', 'Pasta', 'Ice Cream', 'Taco', 'Chocolate Cake', 'Steak', 'Pancakes',
-                'Salad', 'Fried Chicken', 'Ramen', 'Donuts', 'Sandwich', 'Lasagna', 'Hot Dog', 'Spaghetti',
-                'Curry', 'Cheeseburger', 'Waffles', 'Mac and Cheese', 'French Fries', 'Apple Pie', 'Chocolate',
-                'Bagel', 'Croissant', 'Soup', 'Burrito', 'Nachos', 'Smoothie'
-            ],
-            'Cartoons': [
-                'SpongeBob SquarePants', 'Tom and Jerry', 'Looney Tunes', 'Scooby-Doo', 'Adventure Time',
-                'Teen Titans', 'Gravity Falls', 'The Powerpuff Girls', 'Pokemon', 'Dragon Ball Z', 'The Simpsons',
-                'Family Guy', 'Rick and Morty', 'South Park', 'Mickey Mouse', 'Donald Duck', 'Naruto', 'One Piece',
-                'Digimon', 'Avatar: The Last Airbender', 'Ben 10', 'Teenage Mutant Ninja Turtles', 'Fairly OddParents',
-                'My Little Pony', 'Steven Universe', 'The Amazing World of Gumball'
-            ]
-        };
-
         // DOM Elements
         const categoryScreen = document.getElementById('category-screen');
         const gameScreen = document.getElementById('game-screen');
@@ -238,9 +192,9 @@
             randomButton.onclick = () => startGame('Random');
             topButtonsContainer.appendChild(randomButton);
 
-            // Create regular category buttons
+            // Create regular category buttons from the 'categories' object (from categories.js)
             const categoryButtonsContainer = document.getElementById('category-buttons');
-            Object.keys(words).forEach(category => {
+            Object.keys(categories).forEach(category => {
                 const button = document.createElement('button');
                 button.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-lg sm:text-xl uppercase transition-colors';
                 button.textContent = category;
@@ -294,9 +248,9 @@
             pendingCategory = null; // Clear pending category
 
             if (category === 'Random') {
-                currentWordList = Object.values(words).flat();
+                currentWordList = Object.values(categories).flat();
             } else {
-                currentWordList = [...words[category]];
+                currentWordList = [...categories[category]];
             }
             if (!currentWordList || currentWordList.length === 0) {
                 console.error("Could not start game. Empty word list for category:", category);
