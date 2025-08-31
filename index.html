@@ -1,74 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Charades Game</title>
-  <style>
-    body {
-      margin: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      font-family: sans-serif;
-      background: #222;
-      color: #fff;
-      text-align: center;
-    }
-    #word {
-      font-size: 3em;
-      padding: 20px;
-    }
-    #subjects button {
-      margin: 10px;
-      padding: 15px 25px;
-      font-size: 1.2em;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mobile Charades</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation; /* Disables double-tap to zoom */
+            overflow: hidden; /* Prevents scrolling */
+        }
+        /* Simple pulse animation for the timer */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
+        }
+        .timer-pulse { animation: pulse 1s ease-in-out; }
+    </style>
 </head>
-<body>
-  <div id="subjects">
-    <button onclick="chooseSubject('movies')">Movies</button>
-    <button onclick="chooseSubject('animals')">Animals</button>
-    <button onclick="chooseSubject('sports')">Sports</button>
-  </div>
-  <div id="game" style="display:none;">
-    <div id="word">Tap to start</div>
-  </div>
+<body class="bg-gray-900 text-white flex items-center justify-center h-screen antialiased select-none">
 
-  <script>
-    const words = {
-      movies: ["Inception", "Titanic", "Avengers", "Shrek"],
-      animals: ["Dog", "Cat", "Elephant", "Kangaroo"],
-      sports: ["Football", "Basketball", "Tennis", "Swimming"]
-    };
+    <!-- Screen 1: Category Selection -->
+    <div id="category-screen" class="relative w-full h-full max-w-md mx-auto p-8 flex flex-col justify-center items-center text-center">
+        <div class="absolute top-6 right-6">
+            <button id="settings-btn" class="text-gray-400 hover:text-white transition-colors p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+            </button>
+        </div>
+        <h1 class="text-5xl font-black mb-2 uppercase tracking-wider flex-shrink-0">Charades</h1>
+        <p class="text-lg text-gray-400 mb-6 flex-shrink-0">Choose a category to start!</p>
+        
+        <div id="top-buttons-container" class="w-full mb-4 flex-shrink-0 space-y-4">
+             <!-- Random button will be inserted here -->
+        </div>
 
-    let currentSubject = null;
+        <!-- Scrollable container for categories -->
+        <div class="flex-grow w-full overflow-y-auto pb-4">
+            <div id="category-buttons" class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                <!-- Category buttons will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
 
-    function chooseSubject(subject) {
-      currentSubject = subject;
-      document.getElementById("subjects").style.display = "none";
-      document.getElementById("game").style.display = "flex";
-      newWord();
-    }
+    <!-- Screen 2: Game Screen -->
+    <div id="game-screen" class="hidden w-full h-full flex flex-col relative">
+        <!-- Top Bar: Timer and Score -->
+        <div class="flex justify-between items-center p-4 text-2xl font-bold z-10">
+            <div id="timer" class="bg-gray-800 px-4 py-2 rounded-lg">Time: <span id="time-left">60</span></div>
+            <div id="score" class="bg-gray-800 px-4 py-2 rounded-lg">Score: <span id="current-score">0</span></div>
+        </div>
 
-    function newWord() {
-      const list = words[currentSubject];
-      const randomWord = list[Math.floor(Math.random() * list.length)];
-      document.getElementById("word").textContent = randomWord;
-    }
+        <!-- Main Game Area -->
+        <div class="flex-grow flex relative -mt-16 pt-16">
+            <!-- Tap Area: Correct (Left) -->
+            <div id="correct-area" class="w-1/2 h-full bg-green-600/80 active:bg-green-700 transition-colors cursor-pointer"></div>
+            <!-- Tap Area: Pass (Right) -->
+            <div id="pass-area" class="w-1/2 h-full bg-red-600/80 active:bg-red-700 transition-colors cursor-pointer"></div>
+            <!-- Word Display (Overlay) -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <h2 id="word-display" class="text-6xl md:text-8xl font-extrabold text-center px-4 bg-gray-900/60 rounded-xl p-4 shadow-2xl"></h2>
+            </div>
+        </div>
+        
+        <!-- Feedback Overlays -->
+        <div id="correct-feedback" class="absolute inset-0 bg-green-600 flex items-center justify-center text-7xl font-black uppercase transition-transform duration-300 ease-in-out -translate-x-full">Correct!</div>
+        <div id="pass-feedback" class="absolute inset-0 bg-red-600 flex items-center justify-center text-7xl font-black uppercase transition-transform duration-300 ease-in-out translate-x-full">Passed!</div>
+    </div>
 
-    document.body.addEventListener("click", (e) => {
-      if (!currentSubject) return;
-      const x = e.clientX;
-      if (x < window.innerWidth / 2) {
-        console.log("✅ Good!");
-      } else {
-        console.log("❌ Pass!");
-      }
-      newWord();
-    });
-  </script>
+    <!-- Screen 3: Final Score Screen -->
+    <div id="score-screen" class="hidden w-full h-full p-8 flex flex-col justify-center items-center text-center overflow-y-auto">
+        <div class="w-full max-w-md mx-auto">
+            <h2 id="end-game-title" class="text-4xl font-bold mb-2">Time's Up!</h2>
+            <p class="text-2xl text-gray-400 mb-8">Your final score is:</p>
+            <div id="final-score" class="text-9xl font-black text-yellow-400 mb-12">0</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-green-400 mb-4 border-b-2 border-green-400 pb-2">Correct Words</h3>
+                    <ul id="correct-words-list" class="list-none space-y-2 text-lg"></ul>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-red-400 mb-4 border-b-2 border-red-400 pb-2">Passed Words</h3>
+                    <ul id="passed-words-list" class="list-none space-y-2 text-lg"></ul>
+                </div>
+            </div>
+            <button id="play-again-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Screen 4: Settings -->
+    <div id="settings-screen" class="hidden w-full h-full max-w-md mx-auto p-8 flex flex-col justify-center items-center text-center">
+        <h1 class="text-5xl font-black mb-4 uppercase tracking-wider">Settings</h1>
+        <p class="text-lg text-gray-400 mb-12">Select the round duration.</p>
+        <div id="duration-buttons" class="grid grid-cols-2 gap-4 w-full mb-12">
+            <button data-duration="30" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">30s</button>
+            <button data-duration="60" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">60s</button>
+            <button data-duration="90" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">90s</button>
+            <button data-duration="120" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">120s</button>
+        </div>
+        <button id="back-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">Back</button>
+    </div>
+
+    <script>
+        // HOW TO ADD NEW CATEGORIES:
+        // 1. Add a new entry to the 'words' object below.
+        // 2. The key is the category name (e.g., 'New Category').
+        // 3. The value is an array of strings, with each string being a word or phrase.
+        // 4. Make sure to add a comma after the closing bracket ] of the previous category.
+        // Example:
+        //     'Cartoons': [ ... ],
+        //     'New Category': ['Word 1', 'Word 2', 'Word 3'],
+        // The app will automatically create a new button for your category!
+        const words = {
+            'Movies': [
+                'Inception', 'The Matrix', 'Pulp Fiction', 'Forrest Gump', 'The Godfather', 'Titanic', 'Avatar',
+                'Jurassic Park', 'Star Wars', 'Jaws', 'E.T.', 'The Lion King', 'Frozen', 'Toy Story', 'Finding Nemo',
+                'Avengers: Endgame', 'Black Panther', 'Iron Man', 'The Dark Knight', 'Harry Potter', 'Gladiator',
+                'The Hunger Games', 'Wonder Woman', 'Guardians of the Galaxy', 'Spider-Man', 'Shrek', 'Up', 'Coco', 'Moana'
+            ],
+            'TV Shows': [
+                'Breaking Bad', 'Friends', 'Game of Thrones', 'The Office', 'Stranger Things', 'The Mandalorian',
+                'The Simpsons', 'Rick and Morty', 'Sherlock', 'The Crown', 'Grey\'s Anatomy', 'The Big Bang Theory',
+                'Better Call Saul', 'House of Cards', 'How I Met Your Mother', 'Lost', 'Narcos', 'Westworld',
+                'The Witcher', 'Peaky Blinders', 'Vikings', 'Money Heist', 'Black Mirror', 'Fargo', 'Cobra Kai', 'Dexter', 'Supernatural'
+            ],
+            'Animals': [
+                'Elephant', 'Giraffe', 'Kangaroo', 'Penguin', 'Dolphin', 'Tiger', 'Koala', 'Owl', 'Panda',
+                'Crocodile', 'Lion', 'Bear', 'Wolf', 'Fox', 'Zebra', 'Raccoon', 'Hippopotamus', 'Cheetah',
+                'Rabbit', 'Horse', 'Camel', 'Sloth', 'Eagle', 'Shark', 'Frog', 'Otter', 'Squirrel'
+            ],
+            'Famous People': [
+                'Albert Einstein', 'Marilyn Monroe', 'Leonardo da Vinci', 'Oprah Winfrey', 'Elon Musk',
+                'Beyoncé', 'Bill Gates', 'Cleopatra', 'Michael Jackson', 'Queen Elizabeth II', 'Barack Obama',
+                'Taylor Swift', 'Brad Pitt', 'Angelina Jolie', 'Serena Williams', 'Cristiano Ronaldo',
+                'Lady Gaga', 'Tom Hanks', 'Jennifer Aniston', 'Dwayne Johnson', 'Rihanna', 'Kanye West',
+                'Stephen Hawking', 'Walt Disney', 'Nelson Mandela', 'Martin Luther King Jr.', 'Emma Watson', 'Will Smith', 'Shakira'
+            ],
+            'Foods': [
+                'Pizza', 'Burger', 'Sushi', 'Pasta', 'Ice Cream', 'Taco', 'Chocolate Cake', 'Steak', 'Pancakes',
+                'Salad', 'Fried Chicken', 'Ramen', 'Donuts', 'Sandwich', 'Lasagna', 'Hot Dog', 'Spaghetti',
+                'Curry', 'Cheeseburger', 'Waffles', 'Mac and Cheese', 'French Fries', 'Apple Pie', 'Chocolate',
+                'Bagel', 'Croissant', 'Soup', 'Burrito', 'Nachos', 'Smoothie'
+            ],
+            'Cartoons': [
+                'SpongeBob SquarePants', 'Tom and Jerry', 'Looney Tunes', 'Scooby-Doo', 'Adventure Time',
+                'Teen Titans', 'Gravity Falls', 'The Powerpuff Girls', 'Pokemon', 'Dragon Ball Z', 'The Simpsons',
+                'Family Guy', 'Rick and Morty', 'South Park', 'Mickey Mouse', 'Donald Duck', 'Naruto', 'One Piece',
+                'Digimon', 'Avatar: The Last Airbender', 'Ben 10', 'Teenage Mutant Ninja Turtles', 'Fairly OddParents',
+                'My Little Pony', 'Steven Universe', 'The Amazing World of Gumball'
+            ]
+        };
+
+        // DOM Elements
+        const categoryScreen = document.getElementById('category-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const scoreScreen = document.getElementById('score-screen');
+        const settingsScreen = document.getElementById('settings-screen');
+        
+        const settingsBtn = document.getElementById('settings-btn');
+        const backBtn = document.getElementById('back-btn');
+
+        const timeLeftDisplay = document.getElementById('time-left');
+        const currentScoreDisplay = document.getElementById('current-score');
+        const wordDisplay = document.getElementById('word-display');
+        const timerDisplay = document.getElementById('timer');
+
+        const correctArea = document.getElementById('correct-area');
+        const passArea = document.getElementById('pass-area');
+        const correctFeedback = document.getElementById('correct-feedback');
+        const passFeedback = document.getElementById('pass-feedback');
+
+        const finalScoreDisplay = document.getElementById('final-score');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const endGameTitle = document.getElementById('end-game-title');
+        const correctWordsList = document.getElementById('correct-words-list');
+        const passedWordsList = document.getElementById('passed-words-list');
+
+        // Game State
+        let currentWordList = [];
+        let correctWords = [];
+        let passedWords = [];
+        let score = 0;
+        let timer;
+        let gameDuration = 60;
+        let timeLeft;
+        let isAnimating = false;
+
+        // --- UI Initialization ---
+        function initializeApp() {
+            const topButtonsContainer = document.getElementById('top-buttons-container');
+            
+            // Create Random button
+            const randomButton = document.createElement('button');
+            randomButton.className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors tracking-wider';
+            randomButton.textContent = '🎲 Random';
+            randomButton.onclick = () => startGame('Random');
+            topButtonsContainer.appendChild(randomButton);
+
+            // Create regular category buttons
+            const categoryButtonsContainer = document.getElementById('category-buttons');
+            Object.keys(words).forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors';
+                button.textContent = category;
+                button.onclick = () => startGame(category);
+                categoryButtonsContainer.appendChild(button);
+            });
+            updateDurationSelection();
+        }
+
+        // --- Main Game Flow ---
+        function startGame(category) {
+            if (category === 'Random') {
+                currentWordList = Object.values(words).flat();
+            } else {
+                currentWordList = [...words[category]];
+            }
+            if (!currentWordList || currentWordList.length === 0) {
+                console.error("Could not start game. Empty word list for category:", category);
+                return;
+            }
+            shuffleArray(currentWordList);
+
+            score = 0;
+            timeLeft = gameDuration;
+            correctWords = [];
+            passedWords = [];
+            currentScoreDisplay.innerText = score;
+            timeLeftDisplay.innerText = timeLeft;
+            timerDisplay.classList.remove('timer-pulse', 'text-red-500');
+            
+            showScreen('game-screen');
+            nextWord();
+            startTimer();
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
+                timeLeftDisplay.innerText = timeLeft;
+                if (timeLeft <= 10) {
+                     timerDisplay.classList.add('timer-pulse', 'text-red-500');
+                }
+                if (timeLeft <= 0) {
+                    endGame('time');
+                }
+            }, 1000);
+        }
+        
+        function nextWord() {
+            if (currentWordList.length === 0) {
+                endGame('words');
+                return;
+            }
+            wordDisplay.innerText = currentWordList.pop();
+        }
+
+        function handleCorrect() {
+            if (isAnimating) return;
+            isAnimating = true;
+            correctFeedback.classList.remove('-translate-x-full');
+            setTimeout(() => {
+                score++;
+                correctWords.push(wordDisplay.innerText);
+                currentScoreDisplay.innerText = score;
+                nextWord();
+                correctFeedback.classList.add('-translate-x-full');
+                isAnimating = false;
+            }, 400);
+        }
+
+        function handlePass() {
+            if (isAnimating) return;
+            isAnimating = true;
+            passFeedback.classList.remove('translate-x-full');
+            setTimeout(() => {
+                const currentWord = wordDisplay.innerText;
+                if (currentWord && currentWord !== "No more words!") {
+                    passedWords.push(currentWord);
+                }
+                nextWord();
+                passFeedback.classList.add('translate-x-full');
+                isAnimating = false;
+            }, 400);
+        }
+
+        function endGame(reason) {
+            clearInterval(timer);
+            if (reason === 'time') {
+                endGameTitle.innerText = "Time's Up!";
+                const currentWord = wordDisplay.innerText;
+                if (currentWord && currentWord !== "No more words!") {
+                    passedWords.push(currentWord);
+                }
+            } else if (reason === 'words') {
+                endGameTitle.innerText = "Round Complete!";
+            }
+            finalScoreDisplay.innerText = score;
+            populateEndGameLists();
+            showScreen('score-screen');
+        }
+
+        function populateEndGameLists() {
+            correctWordsList.innerHTML = correctWords.length ? correctWords.map(w => `<li>${w}</li>`).join('') : '<li class="text-gray-500">None!</li>';
+            passedWordsList.innerHTML = passedWords.length ? passedWords.map(w => `<li>${w}</li>`).join('') : '<li class="text-gray-500">None!</li>';
+        }
+
+        function playAgain() { showScreen('category-screen'); }
+
+        // --- Screen Management ---
+        function showScreen(screenId) {
+            ['category-screen', 'game-screen', 'score-screen', 'settings-screen'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+        
+        function showSettings() { showScreen('settings-screen'); }
+        function hideSettings() { showScreen('category-screen'); }
+
+        // --- Settings Logic ---
+        function updateDurationSelection() {
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.classList.toggle('bg-indigo-600', parseInt(btn.dataset.duration) === gameDuration);
+                btn.classList.toggle('bg-gray-700', parseInt(btn.dataset.duration) !== gameDuration);
+            });
+        }
+        function handleDurationChange(event) {
+            gameDuration = parseInt(event.target.closest('.duration-btn').dataset.duration);
+            updateDurationSelection();
+        }
+
+        // --- Utilities ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // --- Event Listeners ---
+        correctArea.addEventListener('click', handleCorrect);
+        passArea.addEventListener('click', handlePass);
+        playAgainBtn.addEventListener('click', playAgain);
+        settingsBtn.addEventListener('click', showSettings);
+        backBtn.addEventListener('click', hideSettings);
+        document.getElementById('duration-buttons').addEventListener('click', handleDurationChange);
+
+        // --- Initialize ---
+        initializeApp();
+    </script>
 </body>
 </html>
+
