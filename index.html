@@ -24,12 +24,14 @@
 
     <!-- Screen 1: Category Selection -->
     <div id="category-screen" class="relative w-full h-full max-w-md mx-auto p-6 flex flex-col justify-start sm:justify-center items-center text-center pt-20 sm:pt-6">
-        <div class="absolute top-6 right-6 flex items-center space-x-2">
-             <button id="fullscreen-btn" class="text-gray-400 hover:text-white transition-colors p-2 hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
-                </svg>
-            </button>
+        <div class="absolute top-6 left-6">
+            <button id="fullscreen-btn" class="text-gray-400 hover:text-white transition-colors p-2 hidden">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+               </svg>
+           </button>
+        </div>
+        <div class="absolute top-6 right-6">
             <button id="settings-btn" class="text-gray-400 hover:text-white transition-colors p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -78,24 +80,36 @@
     </div>
 
     <!-- Screen 3: Final Score Screen -->
-    <div id="score-screen" class="hidden w-full h-full p-8 flex flex-col justify-center items-center text-center overflow-y-auto">
-        <div class="w-full max-w-md mx-auto">
-            <h2 id="end-game-title" class="text-4xl font-bold mb-2">Time's Up!</h2>
-            <p class="text-2xl text-gray-400 mb-8">Your final score is:</p>
-            <div id="final-score" class="text-8xl sm:text-9xl font-black text-yellow-400 mb-12">0</div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left mb-8">
-                <div>
-                    <h3 class="text-2xl font-bold text-green-400 mb-4 border-b-2 border-green-400 pb-2">Correct Words</h3>
-                    <ul id="correct-words-list" class="list-none space-y-2 text-lg"></ul>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-red-400 mb-4 border-b-2 border-red-400 pb-2">Passed Words</h3>
-                    <ul id="passed-words-list" class="list-none space-y-2 text-lg"></ul>
+    <div id="score-screen" class="hidden w-full h-full p-6 sm:p-8 flex flex-col justify-start items-center text-center">
+        <div class="w-full max-w-md mx-auto flex flex-col h-full">
+            <!-- Non-scrolling top part -->
+            <div class="flex-shrink-0">
+                <h2 id="end-game-title" class="text-4xl font-bold mb-2">Time's Up!</h2>
+                <p class="text-2xl text-gray-400 mb-6">Your final score is:</p>
+                <div id="final-score" class="text-8xl sm:text-9xl font-black text-yellow-400 mb-8">0</div>
+            </div>
+
+            <!-- Scrollable middle part -->
+            <div class="flex-grow overflow-y-auto mb-6 text-left">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-green-400 mb-4 border-b-2 border-green-400 pb-2">Correct Words</h3>
+                        <ul id="correct-words-list" class="list-none space-y-2 text-lg"></ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-400 mb-4 border-b-2 border-red-400 pb-2">Passed Words</h3>
+                        <ul id="passed-words-list" class="list-none space-y-2 text-lg"></ul>
+                    </div>
                 </div>
             </div>
-            <button id="play-again-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors">Play Again</button>
+
+            <!-- Non-scrolling bottom part -->
+            <div class="flex-shrink-0 w-full">
+                 <button id="play-again-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors">Play Again</button>
+            </div>
         </div>
     </div>
+
 
     <!-- Screen 4: Settings -->
     <div id="settings-screen" class="hidden w-full h-full max-w-md mx-auto p-8 flex flex-col justify-center items-center text-center">
