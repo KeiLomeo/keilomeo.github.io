@@ -292,17 +292,18 @@
         async function startGame(category) {
             pendingCategory = category; // Store the category selection
 
-            // On mobile, automatically go fullscreen and landscape
-            if (isMobile() && document.documentElement.requestFullscreen && !document.fullscreenElement) {
-                await goFullscreenAndLandscape();
-                proceedToStartGame();
-            } else if (window.innerWidth < 768 && document.documentElement.requestFullscreen && !document.fullscreenElement) {
-                // Fallback: show prompt for smaller screens that aren't detected as mobile
+            // Always prompt for fullscreen on mobile or small screens if not already fullscreen
+            if (
+                (isMobile() || window.innerWidth < 768) &&
+                document.documentElement.requestFullscreen &&
+                !document.fullscreenElement
+            ) {
                 fullscreenPrompt.classList.remove('hidden');
-            } else {
-                // On desktop or if already fullscreen, start the game immediately
-                proceedToStartGame();
+                // Do not proceed yet, wait for user to respond to prompt
+                return;
             }
+            // On desktop or if already fullscreen, start the game immediately
+            proceedToStartGame();
         }
 
         function proceedToStartGame() {
@@ -512,10 +513,29 @@
         document.getElementById('duration-buttons').addEventListener('click', handleDurationChange);
 
         fullscreenYesBtn.addEventListener('click', async () => {
+            fullscreenPrompt.classList.add('hidden');
             await goFullscreenAndLandscape();
+            // Wait for fullscreenchange event before proceeding, or fallback after a short delay
+            if (!document.fullscreenElement) {
+                // Wait for fullscreen to be entered, then proceed
+                const handler = () => {
+                    document.removeEventListener('fullscreenchange', handler);
+                    proceedToStartGame();
+                };
+                document.addEventListener('fullscreenchange', handler);
+                // Fallback: proceed after 1s if fullscreenchange doesn't fire
+                setTimeout(() => {
+                    document.removeEventListener('fullscreenchange', handler);
+                    proceedToStartGame();
+                }, 1000);
+            } else {
+                proceedToStartGame();
+            }
+        });
+        fullscreenNoBtn.addEventListener('click', () => {
+            fullscreenPrompt.classList.add('hidden');
             proceedToStartGame();
         });
-        fullscreenNoBtn.addEventListener('click', proceedToStartGame);
 
 
         // --- Initialize ---
