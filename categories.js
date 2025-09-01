@@ -1,13 +1,3 @@
-// HOW TO ADD NEW CATEGORIES:
-// 1. Add a new entry to the 'categories' object below.
-// 2. The key is the category name (e.g., 'New Category').
-// 3. The value is an array of strings, with each string being a word or phrase.
-// 4. Make sure to add a comma after the closing bracket ] of the previous category.
-// Example:
-//     'Pokémon': [ ... ],
-//     'New Category': ['Word 1', 'Word 2', 'Word 3'],
-// The app will automatically create a new button for your category!
-
 const categories = {
  'Movies': [
   'Inception', 'The Matrix', 'Pulp Fiction', 'Forrest Gump', 'The Godfather', 'Titanic', 'Avatar', 'Jurassic Park',
