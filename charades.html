@@ -2,366 +2,415 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charades Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mobile Charades</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            touch-action: manipulation; /* Prevents double-tap zoom on mobile */
+            touch-action: manipulation; /* Disables double-tap to zoom */
+            overflow: hidden; /* Prevents scrolling */
         }
-        .main-content {
-            height: 100vh;
-            height: -webkit-fill-available; /* For iOS Safari */
+        /* Simple pulse animation for the timer */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.9; }
         }
-        .category-grid {
-            max-height: 60vh;
-        }
-        /* Custom scrollbar for better aesthetics */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
+        .timer-pulse { animation: pulse 1s ease-in-out; }
     </style>
 </head>
-<body class="bg-gray-900 text-white flex flex-col items-center justify-center main-content overflow-hidden">
+<body class="bg-gray-900 text-white flex items-center justify-center h-screen antialiased select-none">
 
-    <!-- Screen 1: Main Menu -->
-    <div id="main-menu" class="w-full h-full max-w-2xl mx-auto p-4 md:p-8 flex flex-col justify-center items-center text-center">
-        <div class="absolute top-4 left-4 flex space-x-4">
-             <a href="index.html" class="p-2 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors" aria-label="Back to Home">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
-            </a>
-            <button id="fullscreen-btn" class="p-2 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors" aria-label="Toggle Fullscreen">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1v4m0 0h-4m4-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 1v-4m0 0h-4m4 4l-5-5" /></svg>
+    <!-- Screen 1: Category Selection -->
+    <div id="category-screen" class="relative w-full h-full max-w-md mx-auto p-6 flex flex-col justify-start sm:justify-center items-center text-center pt-20 sm:pt-6">
+        <div class="absolute top-6 left-6 flex items-center gap-2">
+             <button id="back-to-home-btn" class="text-gray-400 hover:text-white transition-colors p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12a9 9 0 1118 0 9 9 0 01-18 0z" />
+                </svg>
+             </button>
+            <button id="fullscreen-btn" class="text-gray-400 hover:text-white transition-colors p-2 hidden">
+               <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 0h-4m4 0l-5-5" />
+               </svg>
+           </button>
+        </div>
+        <div class="absolute top-6 right-6">
+            <button id="settings-btn" class="text-gray-400 hover:text-white transition-colors p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
             </button>
         </div>
-        <div class="absolute top-4 right-4">
-             <button id="settings-btn" class="p-2 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors" aria-label="Settings">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-            </button>
-        </div>
-
-        <h1 class="text-4xl md:text-5xl font-black mb-2 uppercase tracking-wider">Charades</h1>
-        <p class="text-lg text-gray-400 mb-6">Choose a category to start!</p>
+        <h1 class="text-4xl sm:text-5xl font-black mb-2 uppercase tracking-wider flex-shrink-0">Charades</h1>
+        <p class="text-lg text-gray-400 mb-8 flex-shrink-0">Choose a category to start!</p>
         
-        <div id="random-button-container" class="w-full mb-4 px-4"></div>
-        <div id="category-buttons" class="grid grid-cols-2 md:grid-cols-3 gap-3 w-full overflow-y-auto custom-scrollbar px-4 category-grid"></div>
+        <div id="top-buttons-container" class="w-full mb-4 flex-shrink-0 space-y-4">
+             <!-- Random button will be inserted here -->
+        </div>
+
+        <!-- Scrollable container for categories -->
+        <div class="flex-grow w-full overflow-y-auto pb-4">
+            <div id="category-buttons" class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                <!-- Category buttons will be inserted here by JavaScript -->
+            </div>
+        </div>
     </div>
 
     <!-- Screen 2: Game Screen -->
     <div id="game-screen" class="hidden w-full h-full flex flex-col relative">
-        <div class="flex justify-between items-center p-4 text-xl md:text-2xl font-bold z-10">
+        <!-- Top Bar: Timer and Score -->
+        <div class="flex justify-between items-center p-4 text-xl sm:text-2xl font-bold z-10">
             <div id="timer" class="bg-gray-800 px-4 py-2 rounded-lg">Time: <span id="time-left">60</span></div>
             <div id="score" class="bg-gray-800 px-4 py-2 rounded-lg">Score: <span id="current-score">0</span></div>
         </div>
+
+        <!-- Main Game Area -->
         <div class="flex-grow flex relative -mt-16 pt-16">
+            <!-- Tap Area: Correct (Left) -->
             <div id="correct-area" class="w-1/2 h-full bg-green-600/80 active:bg-green-700 transition-colors cursor-pointer"></div>
+            <!-- Tap Area: Pass (Right) -->
             <div id="pass-area" class="w-1/2 h-full bg-red-600/80 active:bg-red-700 transition-colors cursor-pointer"></div>
+            <!-- Word Display (Overlay) -->
             <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <h2 id="word-display" class="text-5xl md:text-8xl font-extrabold text-center px-4 bg-gray-900/60 rounded-xl p-4 shadow-2xl"></h2>
+                <h2 id="word-display" class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold text-center px-4 bg-gray-900/60 rounded-xl p-4 shadow-2xl"></h2>
             </div>
         </div>
-        <div id="correct-feedback" class="absolute inset-0 bg-green-600 flex items-center justify-center text-5xl md:text-7xl font-black uppercase transition-transform duration-300 ease-in-out -translate-x-full">Correct!</div>
-        <div id="pass-feedback" class="absolute inset-0 bg-red-600 flex items-center justify-center text-5xl md:text-7xl font-black uppercase transition-transform duration-300 ease-in-out translate-x-full">Passed!</div>
+        
+        <!-- Feedback Overlays -->
+        <div id="correct-feedback" class="absolute inset-0 bg-green-600 flex items-center justify-center text-5xl sm:text-7xl font-black uppercase transition-transform duration-300 ease-in-out -translate-x-full">Correct!</div>
+        <div id="pass-feedback" class="absolute inset-0 bg-red-600 flex items-center justify-center text-5xl sm:text-7xl font-black uppercase transition-transform duration-300 ease-in-out translate-x-full">Passed!</div>
     </div>
 
     <!-- Screen 3: Final Score Screen -->
-    <div id="score-screen" class="hidden w-full h-full p-4 md:p-8 flex flex-col justify-center items-center text-center">
-        <div class="w-full max-w-2xl text-center">
-            <h2 id="end-game-title" class="text-4xl md:text-5xl font-black mb-2">Round Over!</h2>
-            <p class="text-2xl md:text-3xl text-yellow-400 mb-6">Final Score: <span id="final-score">0</span></p>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left overflow-y-auto" style="max-height: 50vh;">
-                <div>
-                    <h3 class="text-2xl font-bold text-green-400 border-b-2 border-green-400 pb-2 mb-3">Correct Words</h3>
-                    <ul id="correct-words-list" class="space-y-1 text-lg"></ul>
-                </div>
-                <div>
-                    <h3 class="text-2xl font-bold text-red-400 border-b-2 border-red-400 pb-2 mb-3">Passed Words</h3>
-                    <ul id="passed-words-list" class="space-y-1 text-lg"></ul>
+    <div id="score-screen" class="hidden w-full h-full p-6 sm:p-8 flex flex-col justify-start items-center text-center">
+        <div class="w-full max-w-md mx-auto flex flex-col h-full">
+            <!-- Non-scrolling top part -->
+            <div class="flex-shrink-0">
+                <h2 id="end-game-title" class="text-4xl font-bold mb-2">Time's Up!</h2>
+                <p class="text-2xl text-gray-400 mb-6">Your final score is:</p>
+                <div id="final-score" class="text-8xl sm:text-9xl font-black text-yellow-400 mb-8">0</div>
+            </div>
+
+            <!-- Scrollable middle part -->
+            <div class="flex-grow overflow-y-auto mb-6 text-left">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-bold text-green-400 mb-4 border-b-2 border-green-400 pb-2">Correct Words</h3>
+                        <ul id="correct-words-list" class="list-none space-y-2 text-lg"></ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-red-400 mb-4 border-b-2 border-red-400 pb-2">Passed Words</h3>
+                        <ul id="passed-words-list" class="list-none space-y-2 text-lg"></ul>
+                    </div>
                 </div>
             </div>
+
+            <!-- Non-scrolling bottom part -->
+            <div class="flex-shrink-0 w-full">
+                 <button id="play-again-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors">Play Again</button>
+            </div>
         </div>
-        <button id="play-again-btn" class="mt-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg text-xl uppercase transition-colors">Play Again</button>
     </div>
-    
-    <!-- Screen 4: Settings Screen -->
-    <div id="settings-screen" class="hidden w-full h-full p-8 flex flex-col justify-center items-center text-center">
-        <h2 class="text-4xl font-black mb-6">Settings</h2>
-        <div class="w-full max-w-md">
-            <p class="text-xl mb-4">Round Duration (seconds)</p>
-            <div id="duration-options" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
-            <button id="back-to-menu-btn" class="mt-8 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-8 rounded-lg text-xl uppercase transition-colors">Back to Menu</button>
+
+
+    <!-- Screen 4: Settings -->
+    <div id="settings-screen" class="hidden w-full h-full max-w-md mx-auto p-8 flex flex-col justify-center items-center text-center">
+        <h1 class="text-4xl sm:text-5xl font-black mb-4 uppercase tracking-wider">Settings</h1>
+        <p class="text-lg text-gray-400 mb-12">Select the round duration.</p>
+        <div id="duration-buttons" class="grid grid-cols-2 gap-4 w-full mb-12">
+            <button data-duration="30" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">30s</button>
+            <button data-duration="60" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">60s</button>
+            <button data-duration="90" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">90s</button>
+            <button data-duration="120" class="duration-btn w-full bg-gray-700 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">120s</button>
         </div>
+        <button id="back-btn" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors">Back</button>
     </div>
 
     <!-- Fullscreen Prompt Modal -->
-    <div id="fullscreen-prompt" class="hidden absolute inset-0 bg-black bg-opacity-80 flex flex-col justify-center items-center text-center p-8 z-50">
-        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl max-w-sm">
-            <h3 class="text-2xl font-bold mb-4">Fullscreen Mode</h3>
-            <p class="text-gray-300 mb-6">For the best experience, we recommend fullscreen and landscape mode. Would you like to enable it?</p>
+    <div id="fullscreen-prompt" class="hidden absolute inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4">
+        <div class="bg-gray-800 rounded-lg p-8 text-center shadow-2xl max-w-sm">
+            <h3 class="text-2xl font-bold mb-4">Go Fullscreen?</h3>
+            <p class="text-gray-400 mb-8">For the best experience, we recommend playing in fullscreen and landscape mode.</p>
             <div class="flex justify-center gap-4">
-                <button id="prompt-yes-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg uppercase">Yes, Please!</button>
-                <button id="prompt-no-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg uppercase">No, Thanks</button>
+                <button id="fullscreen-yes" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-lg uppercase">Yes</button>
+                <button id="fullscreen-no" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg uppercase">No, thanks</button>
             </div>
         </div>
     </div>
-
+    
+    <!-- Load the categories from the external file -->
     <script src="categories.js"></script>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // DOM Elements
-            const mainMenu = document.getElementById('main-menu');
-            const gameScreen = document.getElementById('game-screen');
-            const scoreScreen = document.getElementById('score-screen');
-            const settingsScreen = document.getElementById('settings-screen');
+        // DOM Elements
+        const categoryScreen = document.getElementById('category-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const scoreScreen = document.getElementById('score-screen');
+        const settingsScreen = document.getElementById('settings-screen');
+        
+        const backToHomeBtn = document.getElementById('back-to-home-btn');
+        const settingsBtn = document.getElementById('settings-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const backBtn = document.getElementById('back-btn');
+
+        const timeLeftDisplay = document.getElementById('time-left');
+        const currentScoreDisplay = document.getElementById('current-score');
+        const wordDisplay = document.getElementById('word-display');
+        const timerDisplay = document.getElementById('timer');
+
+        const correctArea = document.getElementById('correct-area');
+        const passArea = document.getElementById('pass-area');
+        const correctFeedback = document.getElementById('correct-feedback');
+        const passFeedback = document.getElementById('pass-feedback');
+
+        const finalScoreDisplay = document.getElementById('final-score');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const endGameTitle = document.getElementById('end-game-title');
+        const correctWordsList = document.getElementById('correct-words-list');
+        const passedWordsList = document.getElementById('passed-words-list');
+
+        const fullscreenPrompt = document.getElementById('fullscreen-prompt');
+        const fullscreenYesBtn = document.getElementById('fullscreen-yes');
+        const fullscreenNoBtn = document.getElementById('fullscreen-no');
+
+        // Game State
+        let currentWordList = [];
+        let correctWords = [];
+        let passedWords = [];
+        let score = 0;
+        let timer;
+        let gameDuration = 60;
+        let timeLeft;
+        let isAnimating = false;
+        let pendingCategory = null; // To hold category while prompt is shown
+        let hasInitialized = false; // To prevent multiple initializations
+
+        // --- UI Initialization ---
+        function initializeApp() {
+            if (hasInitialized) return; // Only run once
+
+            const topButtonsContainer = document.getElementById('top-buttons-container');
             
+            // Create Random button
+            const randomButton = document.createElement('button');
+            randomButton.className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-4 rounded-lg text-xl sm:text-2xl uppercase transition-colors tracking-wider';
+            randomButton.textContent = '🎲 Random';
+            randomButton.onclick = () => startGame('Random');
+            topButtonsContainer.appendChild(randomButton);
+
+            // Create regular category buttons from the 'categories' object (from categories.js)
             const categoryButtonsContainer = document.getElementById('category-buttons');
-            const randomButtonContainer = document.getElementById('random-button-container');
-            const currentScoreDisplay = document.getElementById('current-score');
-            const timeLeftDisplay = document.getElementById('time-left');
-            const wordDisplay = document.getElementById('word-display');
-            const timerDisplay = document.getElementById('timer');
+            Object.keys(categories).forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-lg sm:text-xl uppercase transition-colors';
+                button.textContent = category;
+                button.onclick = () => startGame(category);
+                categoryButtonsContainer.appendChild(button);
+            });
+            updateDurationSelection();
 
-            const correctArea = document.getElementById('correct-area');
-            const passArea = document.getElementById('pass-area');
-            const correctFeedback = document.getElementById('correct-feedback');
-            const passFeedback = document.getElementById('pass-feedback');
-
-            const finalScoreDisplay = document.getElementById('final-score');
-            const playAgainBtn = document.getElementById('play-again-btn');
-            const endGameTitle = document.getElementById('end-game-title');
-            const correctWordsList = document.getElementById('correct-words-list');
-            const passedWordsList = document.getElementById('passed-words-list');
-            
-            const settingsBtn = document.getElementById('settings-btn');
-            const backToMenuBtn = document.getElementById('back-to-menu-btn');
-            const durationOptionsContainer = document.getElementById('duration-options');
-            
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-            const fullscreenPrompt = document.getElementById('fullscreen-prompt');
-            const promptYesBtn = document.getElementById('prompt-yes-btn');
-            const promptNoBtn = document.getElementById('prompt-no-btn');
-
-            // Game State
-            let currentWordList = [];
-            let correctWords = [];
-            let passedWords = [];
-            let score = 0;
-            let timer;
-            let roundDuration = 60; // Default duration
-            let timeLeft = roundDuration;
-            let isAnimating = false;
-            let selectedCategory = null;
-
-            // --- Game Logic ---
-
-            function initializeApp() {
-                // Create and add the Random button
-                const randomButton = document.createElement('button');
-                randomButton.className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors tracking-wider';
-                randomButton.textContent = '🎲 Random';
-                randomButton.onclick = () => startGame('Random');
-                randomButtonContainer.appendChild(randomButton);
-
-                // Create regular category buttons
-                Object.keys(categories).forEach(category => {
-                    const button = document.createElement('button');
-                    button.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors';
-                    button.textContent = category;
-                    button.onclick = () => startGame(category);
-                    categoryButtonsContainer.appendChild(button);
-                });
-                updateDurationSelection(); // Set initial active duration button
+            // Show fullscreen button if API is available
+            if (document.documentElement.requestFullscreen) {
+                fullscreenBtn.classList.remove('hidden');
             }
-            
-            function startGame(category) {
-                selectedCategory = category;
-                // On smaller screens, ask user about fullscreen/landscape
-                if (window.innerWidth < 768 && document.fullscreenEnabled) {
-                    fullscreenPrompt.classList.remove('hidden');
-                } else {
-                    launchGame(category); // Directly launch on desktop
+            hasInitialized = true;
+        }
+
+        // --- Fullscreen and Orientation ---
+        async function goFullscreenAndLandscape() {
+            try {
+                const element = document.documentElement;
+                if (element.requestFullscreen) {
+                    await element.requestFullscreen();
+                    // Lock orientation after entering fullscreen (best effort)
+                    if (screen.orientation && screen.orientation.lock) {
+                        await screen.orientation.lock('landscape').catch(() => {});
+                    }
                 }
+            } catch (err) {
+                // Log error silently without disturbing user. This can happen if the feature
+                // is blocked by browser permissions policy in an iframe.
+                console.error(`Could not enter fullscreen: ${err.message}`);
             }
+        }
 
-            function launchGame(category) {
-                 // Prepare word list for the round
-                if (category === 'Random') {
-                    currentWordList = Object.values(categories).flat();
-                } else {
-                    currentWordList = [...categories[category]];
-                }
-                shuffleArray(currentWordList);
+        // --- Main Game Flow ---
+        function startGame(category) {
+            pendingCategory = category; // Store the category selection
 
-                // Reset game state
-                score = 0;
-                correctWords = [];
-                passedWords = [];
-                isAnimating = false;
-                currentScoreDisplay.innerText = score;
-                timeLeft = roundDuration;
+            // On smaller screens, ask the user if they want to go fullscreen
+            if (window.innerWidth < 768 && document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                fullscreenPrompt.classList.remove('hidden');
+            } else {
+                // On desktop or if already fullscreen, start the game immediately
+                proceedToStartGame();
+            }
+        }
+
+        function proceedToStartGame() {
+            fullscreenPrompt.classList.add('hidden'); // Ensure prompt is hidden
+            if (!pendingCategory) return; // Don't start if no category was selected
+
+            const category = pendingCategory;
+            pendingCategory = null; // Clear pending category
+
+            if (category === 'Random') {
+                currentWordList = Object.values(categories).flat();
+            } else {
+                currentWordList = [...categories[category]];
+            }
+            if (!currentWordList || currentWordList.length === 0) {
+                console.error("Could not start game. Empty word list for category:", category);
+                return;
+            }
+            shuffleArray(currentWordList);
+
+            score = 0;
+            timeLeft = gameDuration;
+            correctWords = [];
+            passedWords = [];
+            currentScoreDisplay.innerText = score;
+            timeLeftDisplay.innerText = timeLeft;
+            timerDisplay.classList.remove('timer-pulse', 'text-red-500');
+            
+            showScreen('game-screen');
+            nextWord();
+            startTimer();
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft--;
                 timeLeftDisplay.innerText = timeLeft;
+                if (timeLeft <= 10) {
+                     timerDisplay.classList.add('timer-pulse', 'text-red-500');
+                }
+                if (timeLeft <= 0) {
+                    endGame('time');
+                }
+            }, 1000);
+        }
+        
+        function nextWord() {
+            if (currentWordList.length === 0) {
+                endGame('words');
+                return;
+            }
+            wordDisplay.innerText = currentWordList.pop();
+        }
 
-                // UI transition
-                mainMenu.classList.add('hidden');
-                scoreScreen.classList.add('hidden');
-                gameScreen.classList.remove('hidden');
-
-                // Start game
+        function handleCorrect() {
+            if (isAnimating) return;
+            isAnimating = true;
+            correctFeedback.classList.remove('-translate-x-full');
+            setTimeout(() => {
+                score++;
+                correctWords.push(wordDisplay.innerText);
+                currentScoreDisplay.innerText = score;
                 nextWord();
-                startTimer();
-            }
-            
-            function shuffleArray(array) {
-                for (let i = array.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [array[i], array[j]] = [array[j], array[i]];
+                correctFeedback.classList.add('-translate-x-full');
+                isAnimating = false;
+            }, 400);
+        }
+
+        function handlePass() {
+            if (isAnimating) return;
+            isAnimating = true;
+            passFeedback.classList.remove('translate-x-full');
+            setTimeout(() => {
+                const currentWord = wordDisplay.innerText;
+                if (currentWord && currentWord !== "No more words!") {
+                    passedWords.push(currentWord);
                 }
-            }
+                nextWord();
+                passFeedback.classList.add('translate-x-full');
+                isAnimating = false;
+            }, 400);
+        }
 
-            function startTimer() {
-                timer = setInterval(() => {
-                    timeLeft--;
-                    timeLeftDisplay.innerText = timeLeft;
-                    if (timeLeft <= 0) {
-                        endGame('time');
-                    }
-                }, 1000);
-            }
-
-            function nextWord() {
-                if (currentWordList.length === 0) {
-                    endGame('words');
-                    return;
+        async function endGame(reason) {
+            clearInterval(timer);
+            if (reason === 'time') {
+                endGameTitle.innerText = "Time's Up!";
+                const currentWord = wordDisplay.innerText;
+                if (currentWord && currentWord !== "No more words!") {
+                    passedWords.push(currentWord);
                 }
-                const newWord = currentWordList.pop();
-                wordDisplay.innerText = newWord;
+            } else if (reason === 'words') {
+                endGameTitle.innerText = "Round Complete!";
             }
+            finalScoreDisplay.innerText = score;
+            populateEndGameLists();
+            showScreen('score-screen');
 
-            function handleCorrect() {
-                if (isAnimating) return;
-                isAnimating = true;
-                correctFeedback.classList.remove('-translate-x-full');
-                correctFeedback.classList.add('translate-x-0');
-
-                setTimeout(() => {
-                    score++;
-                    correctWords.push(wordDisplay.innerText);
-                    currentScoreDisplay.innerText = score;
-                    nextWord();
-                    correctFeedback.classList.remove('translate-x-0');
-                    correctFeedback.classList.add('-translate-x-full');
-                    isAnimating = false;
-                }, 400);
+            // Attempt to exit fullscreen when game ends, if currently in fullscreen
+            if (document.fullscreenElement && document.exitFullscreen) {
+                await document.exitFullscreen();
             }
+        }
 
-            function handlePass() {
-                if (isAnimating) return;
-                isAnimating = true;
-                passFeedback.classList.remove('translate-x-full');
-                passFeedback.classList.add('translate-x-0');
+        function populateEndGameLists() {
+            correctWordsList.innerHTML = correctWords.length ? correctWords.map(w => `<li>${w}</li>`).join('') : '<li class="text-gray-500">None!</li>';
+            passedWordsList.innerHTML = passedWords.length ? passedWords.map(w => `<li>${w}</li>`).join('') : '<li class="text-gray-500">None!</li>';
+        }
 
-                setTimeout(() => {
-                    const currentWord = wordDisplay.innerText;
-                    if (currentWord && currentWord !== "No more words!") {
-                        passedWords.push(currentWord);
-                    }
-                    nextWord();
-                    passFeedback.classList.remove('translate-x-0');
-                    passFeedback.classList.add('translate-x-full');
-                    isAnimating = false;
-                }, 400);
+        function playAgain() { showScreen('category-screen'); }
+
+        // --- Screen Management ---
+        function showScreen(screenId) {
+            ['category-screen', 'game-screen', 'score-screen', 'settings-screen'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+        }
+        
+        function showSettings() { showScreen('settings-screen'); }
+        function hideSettings() { showScreen('category-screen'); }
+
+        // --- Settings Logic ---
+        function updateDurationSelection() {
+            document.querySelectorAll('.duration-btn').forEach(btn => {
+                btn.classList.toggle('bg-indigo-600', parseInt(btn.dataset.duration) === gameDuration);
+                btn.classList.toggle('bg-gray-700', parseInt(btn.dataset.duration) !== gameDuration);
+            });
+        }
+        function handleDurationChange(event) {
+            gameDuration = parseInt(event.target.closest('.duration-btn').dataset.duration);
+            updateDurationSelection();
+        }
+
+        // --- Utilities ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
             }
+        }
 
-            function endGame(reason) {
-                clearInterval(timer);
-                endGameTitle.innerText = reason === 'time' ? 'Time\'s Up!' : 'Round Complete!';
-                finalScoreDisplay.innerText = score;
+        // --- Event Listeners ---
+        backToHomeBtn.addEventListener('click', () => { window.location.href = 'index.html'; });
+        correctArea.addEventListener('click', handleCorrect);
+        passArea.addEventListener('click', handlePass);
+        playAgainBtn.addEventListener('click', playAgain);
+        settingsBtn.addEventListener('click', showSettings);
+        fullscreenBtn.addEventListener('click', goFullscreenAndLandscape);
+        backBtn.addEventListener('click', hideSettings);
+        document.getElementById('duration-buttons').addEventListener('click', handleDurationChange);
 
-                // Populate word lists
-                correctWordsList.innerHTML = correctWords.length > 0 ? correctWords.map(word => `<li>- ${word}</li>`).join('') : '<li>None</li>';
-                passedWordsList.innerHTML = passedWords.length > 0 ? passedWords.map(word => `<li>- ${word}</li>`).join('') : '<li>None</li>';
-                
-                gameScreen.classList.add('hidden');
-                scoreScreen.classList.remove('hidden');
-            }
-
-            function updateDurationSelection() {
-                durationOptionsContainer.innerHTML = '';
-                const durations = [30, 60, 90, 120];
-                durations.forEach(duration => {
-                    const button = document.createElement('button');
-                    button.textContent = duration;
-                    const isActive = duration === roundDuration;
-                    button.className = `font-bold py-3 px-4 rounded-lg text-lg uppercase transition-colors ${isActive ? 'bg-indigo-600 text-white' : 'bg-gray-700 hover:bg-gray-600 text-gray-300'}`;
-                    button.onclick = () => {
-                        roundDuration = duration;
-                        updateDurationSelection();
-                    };
-                    durationOptionsContainer.appendChild(button);
-                });
-            }
-
-            // --- Event Listeners ---
-            correctArea.addEventListener('click', handleCorrect);
-            passArea.addEventListener('click', handlePass);
-            playAgainBtn.addEventListener('click', () => {
-                scoreScreen.classList.add('hidden');
-                mainMenu.classList.remove('hidden');
-            });
-            
-            settingsBtn.addEventListener('click', () => {
-                mainMenu.classList.add('hidden');
-                settingsScreen.classList.remove('hidden');
-            });
-
-            backToMenuBtn.addEventListener('click', () => {
-                settingsScreen.classList.add('hidden');
-                mainMenu.classList.remove('hidden');
-            });
-
-            fullscreenBtn.addEventListener('click', () => {
-                if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => {
-                        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-                    });
-                } else {
-                    document.exitFullscreen();
-                }
-            });
-
-            promptYesBtn.addEventListener('click', async () => {
-                fullscreenPrompt.classList.add('hidden');
-                try {
-                    await document.documentElement.requestFullscreen();
-                    await screen.orientation.lock('landscape');
-                } catch (err) {
-                    console.warn("Could not activate fullscreen or landscape mode:", err);
-                } finally {
-                    launchGame(selectedCategory);
-                }
-            });
-
-            promptNoBtn.addEventListener('click', () => {
-                fullscreenPrompt.classList.add('hidden');
-                launchGame(selectedCategory);
-            });
-
-            // --- App Initialization ---
-            initializeApp();
+        fullscreenYesBtn.addEventListener('click', async () => {
+            await goFullscreenAndLandscape();
+            proceedToStartGame();
         });
+        fullscreenNoBtn.addEventListener('click', proceedToStartGame);
+
+
+        // --- Initialize ---
+        // Wait for the DOM to be fully loaded before starting the app
+        // This ensures that the categories.js file has been loaded and parsed
+        document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
 </html>
