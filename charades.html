@@ -33,28 +33,6 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: rgba(255, 255, 255, 0.5);
         }
-        /* Countdown Animation */
-        @keyframes pulse-fade {
-            0% {
-                transform: scale(0.5);
-                opacity: 0;
-            }
-            50% {
-                transform: scale(1.1);
-                opacity: 1;
-            }
-            80% {
-                transform: scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 0;
-            }
-        }
-        .countdown-animate {
-            animation: pulse-fade 1s ease-in-out;
-        }
     </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col items-center justify-center main-content overflow-hidden">
@@ -83,17 +61,10 @@
     </div>
 
     <!-- Screen 2: Game Screen -->
-    <div id="game-screen" class="hidden w-full h-full flex flex-col relative transition-transform duration-300 ease-in-out">
-        <div class="flex justify-between items-center p-4 text-xl md:text-2xl font-bold z-10 relative">
-            <div id="timer" class="flex-1 text-left bg-gray-800 px-4 py-2 rounded-lg">Time: <span id="time-left">60</span></div>
-             <div class="flex-1 text-center">
-                <button id="stop-game-btn" class="bg-red-600 hover:bg-red-700 w-12 h-12 rounded-full flex items-center justify-center transition-transform hover:scale-110 shadow-lg" aria-label="Stop Game">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" viewBox="0 0 24 24" fill="currentColor">
-                        <rect x="7" y="7" width="10" height="10" rx="1"></rect>
-                    </svg>
-                </button>
-            </div>
-            <div id="score" class="flex-1 text-right bg-gray-800 px-4 py-2 rounded-lg">Score: <span id="current-score">0</span></div>
+    <div id="game-screen" class="hidden w-full h-full flex flex-col relative">
+        <div class="flex justify-between items-center p-4 text-xl md:text-2xl font-bold z-10">
+            <div id="timer" class="bg-gray-800 px-4 py-2 rounded-lg">Time: <span id="time-left">60</span></div>
+            <div id="score" class="bg-gray-800 px-4 py-2 rounded-lg">Score: <span id="current-score">0</span></div>
         </div>
         <div class="flex-grow flex relative -mt-16 pt-16">
             <div id="correct-area" class="w-1/2 h-full bg-green-600/80 active:bg-green-700 transition-colors cursor-pointer"></div>
@@ -147,11 +118,6 @@
         </div>
     </div>
 
-    <!-- Screen 5: Countdown Screen -->
-    <div id="countdown-screen" class="hidden absolute inset-0 bg-gray-900 flex-col justify-center items-center text-center z-50">
-        <div id="countdown-display" class="text-9xl font-black text-yellow-400"></div>
-    </div>
-
     <script src="categories.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -160,8 +126,6 @@
             const gameScreen = document.getElementById('game-screen');
             const scoreScreen = document.getElementById('score-screen');
             const settingsScreen = document.getElementById('settings-screen');
-            const countdownScreen = document.getElementById('countdown-screen');
-            const countdownDisplay = document.getElementById('countdown-display');
             
             const categoryButtonsContainer = document.getElementById('category-buttons');
             const randomButtonContainer = document.getElementById('random-button-container');
@@ -182,7 +146,6 @@
             const passedWordsList = document.getElementById('passed-words-list');
             
             const settingsBtn = document.getElementById('settings-btn');
-            const stopGameBtn = document.getElementById('stop-game-btn');
             const backToMenuBtn = document.getElementById('back-to-menu-btn');
             const durationOptionsContainer = document.getElementById('duration-options');
             
@@ -205,42 +168,44 @@
             // --- Game Logic ---
 
             function initializeApp() {
+                // Create and add the Random button
                 const randomButton = document.createElement('button');
                 randomButton.className = 'w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-4 rounded-lg text-2xl uppercase transition-colors tracking-wider';
                 randomButton.textContent = '🎲 Random';
-                randomButton.onclick = () => handleCategorySelection('Random');
+                randomButton.onclick = () => startGame('Random');
                 randomButtonContainer.appendChild(randomButton);
 
+                // Create regular category buttons
                 Object.keys(categories).forEach(category => {
                     const button = document.createElement('button');
                     button.className = 'w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-4 rounded-lg text-xl uppercase transition-colors';
                     button.textContent = category;
-                    button.onclick = () => handleCategorySelection(category);
+                    button.onclick = () => startGame(category);
                     categoryButtonsContainer.appendChild(button);
                 });
-                updateDurationSelection();
+                updateDurationSelection(); // Set initial active duration button
             }
             
-            function handleCategorySelection(category) {
+            function startGame(category) {
                 selectedCategory = category;
+                // On smaller screens, ask user about fullscreen/landscape
                 if (window.innerWidth < 768 && document.fullscreenEnabled) {
                     fullscreenPrompt.classList.remove('hidden');
                 } else {
-                    launchGame();
+                    launchGame(category); // Directly launch on desktop
                 }
             }
-            
-            function launchGame() {
-                if (!selectedCategory) return;
-                 // Prepare word list
-                if (selectedCategory === 'Random') {
+
+            function launchGame(category) {
+                 // Prepare word list for the round
+                if (category === 'Random') {
                     currentWordList = Object.values(categories).flat();
                 } else {
-                    currentWordList = [...categories[selectedCategory]];
+                    currentWordList = [...categories[category]];
                 }
                 shuffleArray(currentWordList);
 
-                // Reset state
+                // Reset game state
                 score = 0;
                 correctWords = [];
                 passedWords = [];
@@ -252,39 +217,11 @@
                 // UI transition
                 mainMenu.classList.add('hidden');
                 scoreScreen.classList.add('hidden');
-                
-                startCountdown();
-            }
+                gameScreen.classList.remove('hidden');
 
-            function startCountdown() {
-                countdownScreen.classList.remove('hidden');
-                let count = 3;
-
-                const updateCountdown = () => {
-                    countdownDisplay.classList.remove('countdown-animate');
-                    void countdownDisplay.offsetWidth; // Force reflow to restart animation
-                    countdownDisplay.textContent = count;
-                    countdownDisplay.classList.add('countdown-animate');
-                };
-
-                updateCountdown();
-
-                const countdownInterval = setInterval(() => {
-                    count--;
-                    if (count > 0) {
-                        updateCountdown();
-                    } else {
-                        clearInterval(countdownInterval);
-                        countdownDisplay.textContent = 'Go!';
-                        countdownDisplay.classList.add('countdown-animate');
-                        setTimeout(() => {
-                            countdownScreen.classList.add('hidden');
-                            gameScreen.classList.remove('hidden');
-                            nextWord();
-                            startTimer();
-                        }, 900);
-                    }
-                }, 1000);
+                // Start game
+                nextWord();
+                startTimer();
             }
             
             function shuffleArray(array) {
@@ -309,7 +246,8 @@
                     endGame('words');
                     return;
                 }
-                wordDisplay.innerText = currentWordList.pop();
+                const newWord = currentWordList.pop();
+                wordDisplay.innerText = newWord;
             }
 
             function handleCorrect() {
@@ -351,17 +289,13 @@
                 clearInterval(timer);
                 endGameTitle.innerText = reason === 'time' ? 'Time\'s Up!' : 'Round Complete!';
                 finalScoreDisplay.innerText = score;
+
+                // Populate word lists
                 correctWordsList.innerHTML = correctWords.length > 0 ? correctWords.map(word => `<li>- ${word}</li>`).join('') : '<li>None</li>';
                 passedWordsList.innerHTML = passedWords.length > 0 ? passedWords.map(word => `<li>- ${word}</li>`).join('') : '<li>None</li>';
+                
                 gameScreen.classList.add('hidden');
                 scoreScreen.classList.remove('hidden');
-            }
-
-            function returnToMenu() {
-                clearInterval(timer);
-                gameScreen.classList.add('hidden');
-                scoreScreen.classList.add('hidden');
-                mainMenu.classList.remove('hidden');
             }
 
             function updateDurationSelection() {
@@ -383,44 +317,46 @@
             // --- Event Listeners ---
             correctArea.addEventListener('click', handleCorrect);
             passArea.addEventListener('click', handlePass);
-            playAgainBtn.addEventListener('click', returnToMenu);
-            stopGameBtn.addEventListener('click', () => {
-                gameScreen.classList.add('opacity-0');
-                setTimeout(() => {
-                    returnToMenu();
-                    gameScreen.classList.remove('opacity-0');
-                }, 300);
+            playAgainBtn.addEventListener('click', () => {
+                scoreScreen.classList.add('hidden');
+                mainMenu.classList.remove('hidden');
             });
             
             settingsBtn.addEventListener('click', () => {
                 mainMenu.classList.add('hidden');
                 settingsScreen.classList.remove('hidden');
             });
+
             backToMenuBtn.addEventListener('click', () => {
                 settingsScreen.classList.add('hidden');
                 mainMenu.classList.remove('hidden');
             });
+
             fullscreenBtn.addEventListener('click', () => {
                 if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen().catch(err => console.error(`Fullscreen error: ${err.message}`));
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    });
                 } else {
                     document.exitFullscreen();
                 }
             });
+
             promptYesBtn.addEventListener('click', async () => {
                 fullscreenPrompt.classList.add('hidden');
                 try {
                     await document.documentElement.requestFullscreen();
                     await screen.orientation.lock('landscape');
                 } catch (err) {
-                    console.warn("Could not activate fullscreen or landscape.", err);
+                    console.warn("Could not activate fullscreen or landscape mode:", err);
                 } finally {
-                    launchGame();
+                    launchGame(selectedCategory);
                 }
             });
+
             promptNoBtn.addEventListener('click', () => {
                 fullscreenPrompt.classList.add('hidden');
-                launchGame();
+                launchGame(selectedCategory);
             });
 
             // --- App Initialization ---
